@@ -5,7 +5,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
   <meta charset="UTF-8">
-  <title>REGISTER</title>
+  <title>Добавить пользователя</title>
 </head>
 <body>
 <form align="left" th:method="POST" th:action="@{/admin/create}" th:object="${user}">
@@ -19,8 +19,16 @@
   <label for="password">Пароль</label><br>
   <input type="text" th:field="*{password}" id="password"/><br>
   <label>Select role:</label><br>
-  <input type="checkbox" th:field="*{roles}" th:value="ROLE_ADMIN" />Администратор<br/>
-  <input type="checkbox" th:field="*{roles}" th:value="ROLE_USER" />Пользователь<br/>
+  <ul>
+    <li th:each="role : ${allRoles}">
+      <div>
+        <input type="checkbox" th:field="*{roles}" th:value="${role.getId()}">
+        <label th:text="${role.getName()}"></label>
+      </div>
+    </li>
+  </ul>
+
+
   <input type="submit" value = "Добавить"/>
 </form>
 <input type="button" value="Выйти" onclick="window.location.href = '/logout'">

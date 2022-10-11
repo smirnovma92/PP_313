@@ -5,30 +5,31 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.entities.User;
-import ru.kata.spring.boot_security.demo.services.UserService;
-
-import java.security.Principal;
-import java.util.List;
+import ru.kata.spring.boot_security.demo.services.RoleServiceImpl;
+import ru.kata.spring.boot_security.demo.services.UserServiceImpl;
 
 @Controller
-public class WebController {
-    private final UserService userService;
+public class AdminController {
+    private final UserServiceImpl userService;
+    private final RoleServiceImpl roleService;
 
     @Autowired
-    public WebController(UserService userService) {
+    public AdminController(UserServiceImpl userService, RoleServiceImpl roleService) {
         this.userService = userService;
+        this.roleService = roleService;
     }
 
     @GetMapping(value = "/admin")
     public String printUsers(Model model) {
-        List<User> users = userService.getAllUsers();
-        model.addAttribute("users", users);
+        model.addAttribute("users", userService.getAllUsers());
+
         model.addAttribute("user", new User());
         return "admin";
     }
 
     @GetMapping("/admin/create")
     public String register(Model model) {
+        model.addAttribute("allRoles", roleService.getAll());
         model.addAttribute("user", new User());
         return "/admin/create";
     }
@@ -41,25 +42,13 @@ public class WebController {
 
     @GetMapping("/admin/edit/{id}")
     public String editUser(@PathVariable("id") Long id, Model model) {
-        User user = userService.getUser(id);
-        model.addAttribute("user", user);
+        model.addAttribute("user", userService.getUser(id));
         return "/admin/edit";
     }
 
     @DeleteMapping("/admin/{id}")
     public String delete(@PathVariable("id") Long id) {
-
         userService.userDelete(id);
         return "redirect:/admin";
     }
-
-
-    @GetMapping("/user")
-    public String user(Principal principal, Model model) {
-        User user = userService.findByUsername(principal.getName());
-        model.addAttribute("userok", user);
-        return "user";
-    }
-
-
 }
